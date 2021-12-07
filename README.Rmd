@@ -1,0 +1,53 @@
+---
+title: "How Data Scientists Salaries Depend on Experience, Job Titles, and Companies of Employment"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![alt text](pic.png)
+
+## Data Wrangling & Brief Summary
+The original dataset comes from [kaggle](https://www.kaggle.com/jackogozaly/data-science-and-stem-salaries).
+
+```{r, message =FALSE, include=FALSE}
+library(tidyverse)  #set_up
+library(patchwork) 
+df <- read.csv("Levels_Fyi_Salary_Data.csv")
+```
+
+```{r}
+df1 <- df %>% # data wrangling 
+  select(title, yearsofexperience, totalyearlycompensation) %>%
+  filter( title == "Business Analyst" | title == "Management Consultant")
+df2 <- df %>% # data wrangling 
+  select(title, yearsofexperience, totalyearlycompensation, company) %>%
+  filter( company == "Amazon" | company == "Google" | company == "Microsoft" | company == "Apple" | company == "Facebook")
+
+summary(df1)
+summary(df2)
+```
+
+## Visualizing Relationships
+* Note the relationship between years of experience and salaries is expressed in both following visualizations.
+
+### For major companies, such as *Amazon, Apple, Facebook, Google, and Microsoft*: 
+```{r pressure, echo=FALSE}
+ggplot( df2, aes( x =yearsofexperience, y = totalyearlycompensation, color = company)) + 
+  geom_point() + 
+  geom_smooth( method = lm, formula = y~x, se = FALSE) + 
+  labs( x = "Years of Experience", y = "Yearly Compensation", title = "Years of Experience Vs. Yearly Compensation for Major Companies")
+```
+
+
+
+### For specific job titles, such as *Business Analyst & Management Consultant*:
+```{r}
+ggplot( df1, aes( x =yearsofexperience, y = totalyearlycompensation, color = title)) + 
+  geom_point() + 
+  geom_smooth( method = lm, formula = y~x, se = FALSE) + 
+  labs( x = "Years of Experience", y = "Yearly Compensation", title = "Years of Experience Vs. Yearly Compensation for BA & MC")
+```
+
